@@ -11,5 +11,4 @@ public class Explosion : MonoBehaviour
         ParticleSystem particles = GetComponent<ParticleSystem>();        
         Destroy(gameObject, particles.main.duration);
     }
-
 }

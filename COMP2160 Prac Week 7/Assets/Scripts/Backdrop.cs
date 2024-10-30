@@ -5,7 +5,6 @@ using UnityEngine;
 public class Backdrop : MonoBehaviour
 {
     [SerializeField] private float speed = 5; // m/s
-
     public float Speed
     {
         get

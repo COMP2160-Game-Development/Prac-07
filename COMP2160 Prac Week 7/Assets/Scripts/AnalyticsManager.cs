@@ -37,17 +37,17 @@ public class AnalyticsManager : MonoBehaviour
     {
         // find the logfile script
         log = gameObject.GetComponent<LogFile>();
-        player = FindObjectOfType<PlayerMove>();
+        GameManager.Instance.DeathEvent += OnDeath;
     }
 
-    void Update()
+    void OnDeath(Transform transform)
     {
         if (log != null) 
         {
 			// write the time and the players x and y positions to the file
 			log.WriteLine(Time.time,
-                 player.transform.position.x,
-                 player.transform.position.y);
+                 transform.position.x,
+                 transform.position.y);
 		}
     }
 }

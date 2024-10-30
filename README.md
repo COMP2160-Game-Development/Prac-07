@@ -29,7 +29,7 @@ The first step is to familiarise yourself with the existing code, and add some c
 
 Read the code and answer the following:
 * Where does player death get processed? How do you know what caused the death?
-* Where does player scoring get processed? How could you record the number of missiles, radar, and power cells destroyed?
+* Where does player scoring get processed? How could you record the number of missiles, radar, and fusion cores destroyed?
 * Where are checkpoints processed?
 
 ### Data Management Plan
@@ -49,8 +49,8 @@ Print out:
 * The checkpoint name
 * Time
 * Score
-* Number of missiles, radar, and power cells destroyed at each checkpoint
-* Number of missiles, radar, and power cells destroyed at the end of the game
+* Number of missiles, radar, and fusion cores destroyed at each checkpoint
+* Number of missiles, radar, and fusion cores destroyed at the end of the game
 
 Consider how to best decouple the analytics tracking from the rest of the game. As much as possible, you want to avoid having your analytics code spread throughout a lot of scripts. You should be able to track all the above information in the GameManager class with minimal changes to other classes. In the next step, we will actually be getting this data over to the AnalyticsManager class, but for now adding your Debug.Log() calls to the GameManager will allow you to monitor what data you are after.
 
@@ -70,30 +70,32 @@ You’ll notice the script is already attached to the AnalyticsManager object, w
 Now, open up the AnalyticsManager script. You’ll notice the following code:
 
 ```
-void Update()
+void OnDeath(Transform transform)
 {
-    if (log != null)
+    if (log != null) 
     {
-        // write the time and the players x and y positions to the file
-        log.WriteLine(Time.time, player.transform.position.x, player.transform.position.y);
-    }
+		// write the time and the players x and y positions to the file
+			log.WriteLine(Time.time,
+                 transform.position.x,
+                 transform.position.y);
+	}
 }
 ```
 
-This code writes data to our logfile every Update. The data it is sending is Time since the game has started running, as well as the player’s x position and y position.
+This code writes data to our logfile in the OnDeath method, which is subscribed to an event from the GameManager. The data it is sending is Time since the game has started running, as well as the player’s x position and y position.
 
-The data being outputted here isn’t all the data that we want, and it might not even be calling when we want it. Think about:
+The data being outputted here isn’t all the data that we want, and it might not even be calling exactly when we want it. Think about:
 * What data do we want to write from our GameManager to the Log?
-* When do we want to call the log.WriteLine() function? Do we really want to call it every frame?
+* When do we want to call the log.WriteLine() function? Is it only on player death?
 
 Update the Data Collection section of your DMP to reflect your answers to these questions.
 
 ### Modifying the code
 Make the necessary changes to the GameManager code, the AnalyticsManager (what data are you collecting and when?) and the Logfiles paramaters in the inspector, using what you've recorded in your DMP as a guide. Here are some of the changes you may need to make:
 
-* Adding event delegates to the GameManager so the AnalyticsManager can subscribe to events. There is already an example of this in the code, with the GameManager having a `GameOverEventHandler` and `GameOverEvent` that the UIManager is subscribed to. For more examples, check the Week 1 lecture notes and Week 6 live lecture for examples.
-* Adding properties to the GameManager so the AnalyticsManager can read some of the private varaibles. There is already an example of this in the code, with the GameManager's `score` and `livesRemaining` variables having associated properites that the UIManager reads. For more examples, check the Week 1 lectures notes and Week 6 live lecture for examples.
-* Adding code to the AnalyticsManager to trigger when to write to the LogFile. Check how the UIManager reads events and values from the GameManager and follow this pattern. Call over your demonstrator if you are stuck!
+* Adding event delegates to the GameManager so the AnalyticsManager can subscribe to events. The OnDeath method and the GameManager's `DeathEventHandler` and `DeathEvent` is an example of this. Follow this pattern and alter this event to pass necessary events and variables.
+* Adding properties to the GameManager so the AnalyticsManager can read some of the private varaibles. There is already an example of this in the code, with the GameManager's `score` and `livesRemaining` variables having associated properites that the UIManager reads.
+* Adding code to the AnalyticsManager to trigger when to write to the LogFile. Check how both the AnalyticsManagers and the UIManager current reads events and values from the GameManager and follow this pattern. Call over your demonstrator if you are stuck!
 * Updating the LogFile paramters in the inspector, such as adding or changing headers, to reflect the data you are collecting.
 
 ### Logging data
@@ -116,7 +118,7 @@ Have a look through the data you have collected. Try to answer the following que
 * How long is a typical play session?
 
 ### Visualise your Data
-You should use visualisations to help your analysis and to communicate your findings. To receive a mark, start with a Scatter Plot:
+You should use visualisations to help your analysis and to communicate your findings. Start with a Scatter Plot:
 
 #### Scatter Plot
 Scatter Plots are useful for grouping multiple data points together and identifying similarities. You can turn your data into a Scatter Plot in Excel by selecting your data (only headers and numeric data - this WILL NOT work if you've also got strings in your dataset), then pressing Insert and selecting Scatter from the Charts section, then selecting the one you want to insert. Your result might look like this (note: data is an example only):

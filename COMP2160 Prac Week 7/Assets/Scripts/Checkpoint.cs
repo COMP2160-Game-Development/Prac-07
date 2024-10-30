@@ -7,7 +7,9 @@ public class Checkpoint : MonoBehaviour
 {
     void OnTriggerEnter2D(Collider2D collider)
     {
-        GameManager.Instance.Checkpoint(transform);
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.Checkpoint(transform);
+        }
     }
-
 }

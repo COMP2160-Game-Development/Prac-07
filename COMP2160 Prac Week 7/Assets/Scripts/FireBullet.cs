@@ -38,5 +38,4 @@ public class FireBullet : MonoBehaviour
             bullet.transform.position = transform.position;
         }        
     }
-
 }

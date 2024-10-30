@@ -20,6 +20,8 @@ public class GameManager : MonoBehaviour
 
     public delegate void GameOverEventHandler(bool win);
     public event GameOverEventHandler GameOverEvent;
+    public delegate void DeathEventHandler(Transform position);
+    public event DeathEventHandler DeathEvent;
     private int score = 0;
     public int Score 
     {
@@ -92,6 +94,7 @@ public class GameManager : MonoBehaviour
     public void Die()
     {
         StartCoroutine(DieTimer());
+        DeathEvent?.Invoke(player.transform); // NOTE: the "?" is short hand for saying "if DeathEvent has any subscribers, then Invoke."
     }
 
     private IEnumerator DieTimer()
@@ -119,6 +122,6 @@ public class GameManager : MonoBehaviour
     public void GameOver(bool win)
     {
         backdrop.Speed = 0;
-        GameOverEvent?.Invoke(win);
+        GameOverEvent?.Invoke(win);  // NOTE: the "?" is short hand for saying "if GameOver has any subscribers, then Invoke."
     }
 }
